@@ -5,12 +5,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"terraform_http_backend/src"
 	"terraform_http_backend/src/handler"
 	"terraform_http_backend/src/log"
 )
 
 func main() {
 	log.Init()
+	log.Info("Starting %s", src.AppName)
 	r := chi.NewRouter()
 	r.Get("/state/{projectName}", handler.GetState)
 	r.Post("/state/{projectName}", handler.SetState)
