@@ -17,7 +17,7 @@ func main() {
 	r.Get("/state/{projectName}", handler.GetState)
 	r.Post("/state/{projectName}", handler.SetState)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
 	}
 }
