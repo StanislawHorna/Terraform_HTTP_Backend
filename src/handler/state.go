@@ -16,21 +16,23 @@ import (
 
 func GetState(w http.ResponseWriter, r *http.Request) {
 	projectName := chi.URLParam(r, "projectName")
+	environment := chi.URLParam(r, "environment")
 
 	store := getStateStore()
 
-	state := store.GetState(projectName)
+	state := store.GetState(projectName, environment)
 	if state == nil {
 		log.Warn("No state found in the store")
 		state = &model.TFState{Version: 1}
 	}
 
 	json.NewEncoder(w).Encode(state)
-	log.Info("State for project: %s returned", projectName)
+	log.Info("State for project: %s (environment %s) returned", projectName, environment)
 }
 
 func SetState(w http.ResponseWriter, r *http.Request) {
 	projectName := chi.URLParam(r, "projectName")
+	environment := chi.URLParam(r, "environment")
 
 	store := getStateStore()
 
@@ -50,13 +52,13 @@ func SetState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = store.SaveState(projectName, state)
+	err = store.SaveState(projectName, environment, state)
 	if err != nil {
 		http.Error(w, "Failed to save the state", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	log.Info("State for project: %s saved", projectName)
+	log.Info("State for project: %s (environment: %s) saved", projectName, environment)
 
 }
 

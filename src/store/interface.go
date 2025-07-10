@@ -5,6 +5,6 @@ import (
 )
 
 type Store interface {
-	GetState(projectName string) *model.TFState
-	SaveState(projectName string, state model.TFState) error
+	GetState(projectName string, environment string) *model.TFState
+	SaveState(projectName string, environment string, state model.TFState) error
 }

@@ -22,8 +22,8 @@ type FileStore struct {
 	extension string
 }
 
-func (fs *FileStore) GetState(projectName string) *model.TFState {
-	filePath := filepath.Join(fs.path, projectName+fs.extension)
+func (fs *FileStore) GetState(projectName string, environment string) *model.TFState {
+	filePath := getFilePath(fs.path, fs.extension, projectName, environment)
 	state := readFile(filePath)
 	if state == nil {
 		state = &model.TFState{Version: 1}
@@ -31,8 +31,8 @@ func (fs *FileStore) GetState(projectName string) *model.TFState {
 
 	return state
 }
-func (fs *FileStore) SaveState(projectName string, state model.TFState) error {
-	filePath := filepath.Join(fs.path, projectName+fs.extension)
+func (fs *FileStore) SaveState(projectName string, environment string, state model.TFState) error {
+	filePath := getFilePath(fs.path, fs.extension, projectName, environment)
 	err := writeFile(filePath, state)
 	if err != nil {
 		return log.Error(err, "Writing file failed")
@@ -61,6 +61,10 @@ func GetInstance() *FileStore {
 
 	})
 	return instance
+}
+
+func getFilePath(path string, extension string, projectName string, environment string) string {
+	return filepath.Join(path, environment+"_"+projectName+extension)
 }
 
 func readFile(path string) *model.TFState {
